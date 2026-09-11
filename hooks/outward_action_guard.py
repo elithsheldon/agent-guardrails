@@ -19,6 +19,9 @@ GUARDED = [
     (r"\bgh\s+(issue|pr)\s+comment\b",   "GitHub へのコメント"),
     (r"\bgh\s+issue\s+create\b",         "Issue の作成"),
     (r"\bgit\s+push\b",                  "push"),
+    (r"\bgh\s+repo\s+create\b",          "リポジトリの作成"),
+    (r"\bgh\s+release\s+create\b",       "リリースの公開"),
+    (r"\bgh\s+gist\s+create\b",          "gist の公開"),
 ]
 
 
