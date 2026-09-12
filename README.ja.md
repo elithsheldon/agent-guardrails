@@ -1,6 +1,6 @@
 # agent-guardrails
 
-[English](README.md) · **日本語** · [中文](README.zh.md)
+[English](README.md) · **日本語** · [简体中文](README.zh-CN.md) · [繁體中文](README.zh-TW.md) · [한국어](README.ko.md) · [Français](README.fr.md) · [Español](README.es.md) · [Deutsch](README.de.md) · [Bahasa Indonesia](README.id.md) · [Bahasa Melayu](README.ms.md) · [ไทย](README.th.md)
 
 Claude Code 用の**防御フック集**。エージェントが同じ失敗を繰り返さないように、
 覚え書きではなく**機械で止める**ための最小セット。

@@ -1,6 +1,6 @@
 # agent-guardrails
 
-[English](README.md) · [日本語](README.ja.md) · **中文**
+[English](README.md) · [日本語](README.ja.md) · **简体中文** · [繁體中文](README.zh-TW.md) · [한국어](README.ko.md) · [Français](README.fr.md) · [Español](README.es.md) · [Deutsch](README.de.md) · [Bahasa Indonesia](README.id.md) · [Bahasa Melayu](README.ms.md) · [ไทย](README.th.md)
 
 Claude Code 的**防错钩子集**。让重复犯的错**由机器拦住**，而不是再写一条
 「下次注意」的笔记。

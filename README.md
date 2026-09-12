@@ -1,6 +1,6 @@
 # agent-guardrails
 
-**English** · [日本語](README.ja.md) · [中文](README.zh.md)
+**English** · [日本語](README.ja.md) · [简体中文](README.zh-CN.md) · [繁體中文](README.zh-TW.md) · [한국어](README.ko.md) · [Français](README.fr.md) · [Español](README.es.md) · [Deutsch](README.de.md) · [Bahasa Indonesia](README.id.md) · [Bahasa Melayu](README.ms.md) · [ไทย](README.th.md)
 
 Guardrail hooks for Claude Code. Stops repeated mistakes **mechanically**, instead of
 writing yet another note asking the agent to be careful.
