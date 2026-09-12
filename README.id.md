@@ -91,6 +91,12 @@ Teruji 21/21 pada mesin baru dan 26/26 pada mesin yang sudah dikonfigurasi.
 - Pesan runtime hook saat ini berbahasa Jepang. Itu dibaca oleh agen sehingga tidak
   memengaruhi perilaku, tetapi terjemahan sangat diterima.
 
+## Penghargaan
+
+Aturan, skrip, dan pemeriksaan tetap di `reference/anti-self-deception/`
+adalah karya [@Karas-cnk](https://github.com/Karas-cnk), disertakan atas izinnya. `guard_the_guards.py` dan
+aturan pipa/kode keluar berasal dari sana.
+
 ## Lisensi
 
 MIT

@@ -90,6 +90,12 @@ Claude Code용 **가드레일 훅 모음**. 반복되는 실수를 "다음엔 �
 - 훅의 런타임 메시지는 현재 일본어입니다. agent가 읽는 것이라 동작에는 영향이 없지만,
   번역 기여를 환영합니다.
 
+## 감사의 말
+
+`reference/anti-self-deception/` 의 규칙·스크립트·상시 점검은
+[@Karas-cnk](https://github.com/Karas-cnk) 님의 저작물이며 허락을 받아 수록했습니다. `guard_the_guards.py` 와
+`outward_action_guard.py` 의 파이프/종료 코드 규칙은 여기서 이식했습니다.
+
 ## 라이선스
 
 MIT

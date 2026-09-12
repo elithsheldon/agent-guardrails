@@ -92,6 +92,12 @@ Probado con 21/21 en una máquina nueva y 26/26 en una configurada.
 - Los mensajes de ejecución de los hooks están en japonés. Los lee el agente, así que no
   afectan al comportamiento, pero una traducción es bienvenida.
 
+## Créditos
+
+Las reglas, scripts y comprobaciones permanentes de `reference/anti-self-deception/`
+son obra de [@Karas-cnk](https://github.com/Karas-cnk), incluidas con su permiso. `guard_the_guards.py` y la regla
+de tubería/código de salida provienen de ahí.
+
 ## Licencia
 
 MIT

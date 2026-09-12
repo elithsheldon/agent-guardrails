@@ -85,6 +85,12 @@ Claude Code 的**防錯掛勾集**。讓重複犯的錯**由機器擋下**，而
 - `reply_check.py` 用的是正規表示式，會誤判。誤判時**把樣式收窄，不要刪掉這項檢查**。
 - 掛勾的執行期訊息目前是日文。那部分是給 agent 讀的，不影響行為，歡迎翻譯。
 
+## 致謝
+
+`reference/anti-self-deception/` 中的規則、指令稿與常駐檢查均出自
+[@Karas-cnk](https://github.com/Karas-cnk)，經許可收錄。`guard_the_guards.py` 以及 `outward_action_guard.py`
+裡的管線／結束碼規則都是從中移植的。
+
 ## 授權
 
 MIT

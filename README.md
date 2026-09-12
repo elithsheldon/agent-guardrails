@@ -94,6 +94,12 @@ Tested at 21/21 on a fresh machine and 26/26 on a configured one.
 - Hook messages are currently Japanese. Runtime output is read by the agent, so this
   does not affect behaviour, but a translation is welcome.
 
+## Credits
+
+`reference/anti-self-deception/` — the rule-set, scripts and standing
+checks are the work of [@Karas-cnk](https://github.com/Karas-cnk), included with permission. `guard_the_guards.py`
+and the pipe/exit-code rule in `outward_action_guard.py` are ported from it.
+
 ## Licence
 
 MIT

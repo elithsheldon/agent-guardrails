@@ -93,6 +93,12 @@ Diuji 21/21 pada mesin baharu dan 26/26 pada mesin yang telah dikonfigurasi.
 - Mesej masa jalan cangkuk kini dalam bahasa Jepun. Ia dibaca oleh ejen jadi tidak
   menjejaskan tingkah laku, tetapi terjemahan amat dialu-alukan.
 
+## Penghargaan
+
+Peraturan, skrip dan pemeriksaan tetap dalam `reference/anti-self-deception/`
+ialah hasil kerja [@Karas-cnk](https://github.com/Karas-cnk), disertakan dengan kebenarannya. `guard_the_guards.py`
+dan peraturan paip/kod keluar diambil dari situ.
+
 ## Lesen
 
 MIT

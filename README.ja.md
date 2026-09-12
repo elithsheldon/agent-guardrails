@@ -88,6 +88,12 @@ Claude Code 用の**防御フック集**。エージェントが同じ失敗を�
   煩わしければ `GUARDED` の一覧から外す。
 - `reply_check.py` は正規表現なので誤検知する。うるさければ**消さずに狭める**こと。
 
+## 謝辞
+
+`reference/anti-self-deception/` の規則・スクリプト・常駐チェックは
+[@Karas-cnk](https://github.com/Karas-cnk) の著作物で、許諾を得て収録しています。`guard_the_guards.py` と
+`outward_action_guard.py` のパイプ／終了コード規則はここから移植したものです。
+
 ## ライセンス
 
 MIT

@@ -85,6 +85,12 @@ Claude Code 的**防错钩子集**。让重复犯的错**由机器拦住**，而
 - `reply_check.py` 是正则，会误报。误报时**把模式收窄，不要删掉这项检查**。
 - 钩子的运行时提示目前是日文。那部分是给 agent 读的，不影响行为，欢迎翻译。
 
+## 致谢
+
+`reference/anti-self-deception/` 中的规则、脚本与常驻检查均出自
+[@Karas-cnk](https://github.com/Karas-cnk)，经许可收录。`guard_the_guards.py` 以及 `outward_action_guard.py`
+里的管道／退出码规则都是从中移植的。
+
 ## 许可
 
 MIT

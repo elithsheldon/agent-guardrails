@@ -94,6 +94,12 @@ Getestet mit 21/21 auf einer frischen und 26/26 auf einer eingerichteten Maschin
 - Die Laufzeitmeldungen der Hooks sind auf Japanisch. Sie werden vom Agenten gelesen und
   beeinflussen das Verhalten nicht; eine Übersetzung ist willkommen.
 
+## Danksagung
+
+Die Regeln, Skripte und Dauerprüfungen in `reference/anti-self-deception/`
+stammen von [@Karas-cnk](https://github.com/Karas-cnk) und sind mit Erlaubnis enthalten. `guard_the_guards.py`
+und die Pipe/Exit-Code-Regel sind von dort portiert.
+
 ## Lizenz
 
 MIT
