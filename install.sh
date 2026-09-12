@@ -1,17 +1,17 @@
 #!/usr/bin/env bash
-# agent-guardrails をこの環境へ入れる。
+# Install agent-guardrails into this machine.
 #
-# 既存の ~/.claude/settings.json は壊さない（hooks 配列に追記するだけ）。
-# 同じフックが既に登録されていれば重複追加しない。
+# Never clobbers an existing ~/.claude/settings.json: hooks are appended only,
+# and an already-registered hook is not added twice.
 set -euo pipefail
 
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 DEST="$HOME/.claude"
 PY="${PYTHON:-/usr/bin/python3}"
 
-command -v "$PY" >/dev/null 2>&1 || { echo "NG: $PY が見つかりません"; exit 1; }
+command -v "$PY" >/dev/null 2>&1 || { echo "FAIL: $PY not found"; exit 1; }
 
-echo "1. フックとスキルをコピー"
+echo "1. Copying hooks and skill"
 mkdir -p "$DEST/hooks" "$DEST/skills/daily-retro/references" "$DEST/skills/daily-retro/scripts"
 cp "$HERE"/hooks/* "$DEST/hooks/"
 cp "$HERE"/skills/daily-retro/SKILL.md "$DEST/skills/daily-retro/"
@@ -20,7 +20,7 @@ cp "$HERE"/skills/daily-retro/scripts/* "$DEST/skills/daily-retro/scripts/"
 chmod +x "$DEST"/hooks/*.sh 2>/dev/null || true
 echo "   -> $DEST/hooks, $DEST/skills/daily-retro"
 
-echo "2. settings.json にフックを登録（既存設定は保持）"
+echo "2. Registering hooks in settings.json (existing settings preserved)"
 "$PY" - "$DEST" <<'PYEOF'
 import json, pathlib, sys
 dest = pathlib.Path(sys.argv[1])
@@ -43,22 +43,22 @@ for event, matcher, cmd in wanted:
     lst.append({"matcher": matcher, "hooks": [{"type": "command", "command": cmd}]})
     added += 1
 sp.write_text(json.dumps(conf, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-print(f"   -> {added} 件追加（既存はそのまま）")
+print(f"   -> {added} added, existing entries untouched")
 PYEOF
 
-echo "3. 自己テスト"
+echo "3. Self-test"
 if "$PY" "$DEST/skills/daily-retro/scripts/verify-gates.py" > /tmp/agr_verify.txt 2>&1; then
   tail -2 /tmp/agr_verify.txt | sed 's/^/   /'
 else
-  echo "   ★一部のゲートが発火していません:"
+  echo "   Some gates did not fire:"
   grep -E '★NG|落ちた|  -' /tmp/agr_verify.txt | sed 's/^/   /' || true
-  echo "   詳細: /tmp/agr_verify.txt"
+  echo "   Details: /tmp/agr_verify.txt"
 fi
 
 cat <<'NOTE'
 
-残り1つ、手でやること:
-  CLAUDE.example.md を読み、自分の環境（memory の絶対パス・日報の置き場所）に
-  合わせてから ~/.claude/CLAUDE.md として置いてください。
-  そのまま置くと <project-scope> のようなプレースホルダが残ります。
+One step left, by hand:
+  Read CLAUDE.example.md, adapt it to your machine (memory path, daily-report
+  location), then place it at ~/.claude/CLAUDE.md.
+  Copying it unchanged leaves placeholders like <project-scope> in place.
 NOTE

@@ -1,86 +1,99 @@
 # agent-guardrails
 
-Claude Code 用の**防御フック集**。エージェントが同じ失敗を繰り返さないように、
-覚え書きではなく**機械で止める**ための最小セット。
+**English** · [日本語](README.ja.md) · [中文](README.zh.md)
 
-> 人の注意力ではなく、機械で担保する。
+Guardrail hooks for Claude Code. Stops repeated mistakes **mechanically**, instead of
+writing yet another note asking the agent to be careful.
 
-## なぜ作ったか
+> Guarantee it with machinery, not with human attention.
 
-30セッション・ユーザー発言 887 件を実測したところ、ユーザーに訂正された箇所が
-**44 件**あり、パターンは 6 種に収束した。そして**そのすべてが「文章で書いた注意書き」
-だけで守られていた**。注意書きは既に書いてあり、それでも同じ失敗が起きていた。
+## Why
 
-| 実測回数 | パターン | 対策 |
+I measured 30 sessions — 887 user messages. The user had to correct me **44 times**,
+and the corrections collapsed into 6 patterns. Every single one was defended only by
+**prose in a notes file**. The note was already written. The mistake happened anyway.
+
+| Measured | Pattern | Defence now |
 | --- | --- | --- |
-| 12 | 文章・提示の質 | `reply_check.py` が検出 |
-| 9 | 早すぎる完了主張 | `reply_check.py` が検出 |
-| 9 | 頼まれていない成果物を出す | `outward_action_guard.py` が拒否 |
-| 7 | 試さずに「できない」と言う | `reply_check.py` が検出 |
-| 4 | 指示の読み落とし | 基準ファイルに記載（閾値未満） |
-| 3 | 対象の取り違え | 基準ファイルに記載（閾値未満） |
+| 12 | Writing quality | `reply_check.py` detects |
+| 9 | Claiming done too early | `reply_check.py` detects |
+| 9 | Shipping work nobody asked for | `outward_action_guard.py` **refuses** |
+| 7 | Saying "can't" without trying | `reply_check.py` detects |
+| 4 | Missing an instruction | criteria file (below threshold) |
+| 3 | Wrong target repo/env | criteria file (below threshold) |
 
-**5回以上＝繰り返している＝注意書きでは直らない**、を採否の線にしている。
-4回以下は文章のまま残す。全部をゲートにすると警告が飽和して読まれなくなる。
+The adoption rule: **≥5 occurrences means it is recurring, which means a note will not
+fix it** — the note already failed. Below 5 stays prose. Gate everything and the warnings
+saturate until nobody reads them.
 
-## 入っているもの
+## What's here
 
-### フック（`~/.claude/settings.json` に登録して常時稼働）
+### Hooks (registered in `~/.claude/settings.json`, active everywhere)
 
-| ファイル | イベント | 何をするか |
+| File | Event | What it does |
 | --- | --- | --- |
-| `reply_check.py` | Stop | 返信に status ブロックがあるか、完了主張・「できない」宣言に根拠があるかを検出（**警告のみ**。Stop で止めるとループの危険） |
-| `outward_action_guard.py` | PreToolUse(Bash) | 取り消しにくい外向き操作を拒否。環境変数で明示解除。あわせて `<検査> \| tail; echo $?` の**パイプ後 `$?` 参照を拒否** |
-| `guard_the_guards.py` | PreToolUse(Edit/Write) | 検査器・フック・設定・memory の編集時に確認を求める。**検査に落ちたとき産物ではなく採点者を書き換える**のを防ぐ |
-| `daily-retro-reminder.sh` | PostToolUse(Write/Edit) | 日報を書いたら振り返り手順を催促 |
+| `reply_check.py` | Stop | Flags a missing status block, unevidenced completion claims, untested "can't", model-tells (`X, not Y` contrast, counted-inventory openers, cleft openers, throat-clearing), and chatbot leakage. **Warn only** — blocking on Stop risks a loop |
+| `outward_action_guard.py` | PreToolUse(Bash) | **Refuses** hard-to-undo outward actions (PR/push/repo/release/gist). Also refuses `<check> \| tail; echo $?` — that reads *tail's* exit code, not the check's |
+| `guard_the_guards.py` | PreToolUse(Edit/Write) | Asks before editing a checker, hook, settings file, or memory. Stops the agent rewriting the judge instead of fixing the product |
+| `daily-retro-reminder.sh` | PostToolUse | Prompts the retrospective when a daily report is written |
 
-### スキル
+### Skill
 
-`skills/daily-retro/` — 日報を書くタイミングを起点にした改善ループ。
-ミスを「memory → doc → script → preflight → test → 権限」のはしごの
-**できるだけ下**へ落とす。
+`skills/daily-retro/` — an improvement loop triggered by writing the daily report.
+Pushes each mistake as far **down** this ladder as it will go:
 
-### スクリプト
+> memory → doc → script → preflight → test → permission
 
-| ファイル | 用途 |
+### Scripts
+
+| File | Purpose |
 | --- | --- |
-| `mistake-frequency.py` | 過去の全会話から訂正パターンを**数える**。印象で「もう直った」と判断しないため |
-| `verify-gates.py` | **ゲート自身の自己テスト**。わざと引っかかる入力と通る入力の両方を食わせ、26 項目を検証 |
+| `mistake-frequency.py` | **Counts** correction patterns across all past sessions, so "I fixed that already" is measured rather than felt |
+| `verify-gates.py` | **Self-test for the gates.** Feeds each hook input that must trip it and input that must not |
 
-## 一番効いたもの
+### Reference
 
-**`guard_the_guards.py`**。他の防御はすべて「産物」を見ていて、
-**審査される側が採点者を書き換える**のを止める段が無かった。
-フックと自己テストを作った直後、それらを自由に書き換えられる状態だったことに
-気付いていなかった。
+`reference/anti-self-deception/` — 24 rules, 15 scripts and 29 standing checks from
+another team's mature system, included with permission and anonymised.
+See its `ATTRIBUTION.md`.
 
-**`verify-gates.py`**。陳腐化検出を3通り書いて、3回とも全件パスした。
-数字を読まなければ「健全」と3回報告していた。
-**一度も落ちたことのない検査は、何も守っていない可能性がある。**
+## The two that mattered most
 
-## 導入
+**`guard_the_guards.py`.** Every other defence watched *products*. Nothing stopped the
+audited party from rewriting the judge. I had just built three hooks and a self-test —
+and could freely edit all of them to silence a failure.
 
-リポジトリを取得して `bash install.sh` を実行する。
-`~/.claude/hooks/` と `~/.claude/skills/` へコピーし、
-`~/.claude/settings.json` にフックを登録する（既存の設定は保持）。
+**`verify-gates.py`.** I wrote a staleness detector three times and it passed all 18
+memories every time. Without reading the numbers I would have reported "healthy" three
+times over. **A check that has never failed may be protecting nothing.**
 
-`CLAUDE.example.md` は中身を読んで、自分の環境に合わせてから
-`~/.claude/CLAUDE.md` に置くこと。
+## Install
 
-導入後に必ず自己テストを走らせる:
+Clone, then `bash install.sh`. It copies into `~/.claude/hooks/` and `~/.claude/skills/`
+and registers the hooks in `~/.claude/settings.json` — appending only, existing settings
+preserved.
+
+Read `CLAUDE.example.md`, adapt it to your machine (memory path, daily-report location),
+then place it at `~/.claude/CLAUDE.md`.
+
+Then always run the self-test:
 
     python3 ~/.claude/skills/daily-retro/scripts/verify-gates.py
 
-## 注意
+Tested at 21/21 on a fresh machine and 26/26 on a configured one.
 
-- フックは `~/.claude/` に置くので**全ディレクトリで効く**。
-  一方 memory は起動ディレクトリ単位で分かれるため、共通の原則は
-  `~/.claude/CLAUDE.md`（毎回読まれる）側に置く。
-- `outward_action_guard.py` は外向きのコマンドを止める。意図したものは
-  環境変数で明示解除する。煩わしければ `GUARDED` の一覧から外す。
-- `reply_check.py` は正規表現なので誤検知する。うるさければパターンを狭める。
-  **消すのではなく狭める**こと。
+## Notes
 
-## ライセンス
+- Hooks live in `~/.claude/`, so they apply **in every directory**. Memory does not —
+  it is keyed by the directory Claude starts in, so cross-project principles belong in
+  `~/.claude/CLAUDE.md`, which is loaded every session.
+- `outward_action_guard.py` blocks pushes. Intentional ones set `CLAUDE_OUTWARD_OK=1`.
+  Too noisy? Remove entries from `GUARDED`.
+- `reply_check.py` is regex-based and will produce false positives. When it does,
+  **narrow the pattern — don't delete the check.**
+- Hook messages are currently Japanese. Runtime output is read by the agent, so this
+  does not affect behaviour, but a translation is welcome.
+
+## Licence
 
 MIT
