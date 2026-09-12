@@ -35,6 +35,31 @@ and the fix. One sentence of ownership; no repeated apology; no re-litigating it
 - **Trigger (2026-09-11):** wiped a Lambda's environment variables; the honest thing was to lead
   with it, state the 104-second window, and move on.
 
+## 機械が書いたと読める構文を避ける（2026-09-12 実測）
+
+自分の返信 1702 件・13.3 万語を `writing_skills` の文体信号で測った結果:
+
+| 信号 | 実測 | 目標 | |
+| --- | --- | --- | --- |
+| `X, not Y` の対比 | **2.6/千語** | 0.7 | 3.7倍 |
+| `, so` の因果尾 | **4.0/千語** | 2 | 2倍 |
+| コロン+セミコロン | **27.3/千語** | 20 | |
+| 数え上げ導入「Two things…」 | **77 回** | 0 | |
+| cleft 導入「What matters is…」 | **32 回** | 0 | |
+| 前置き「worth noting that」 | **18 回** | 0 | |
+| em dash | 22.9/千語 | — | 上位の AI 信号 |
+
+文長は問題ない（平均 18.7 語、40語超 6%）。**崩れているのは構文の癖だけ**で、
+そこは Wikipedia "Signs of AI writing" が最も分かりやすい signature として
+挙げているものと一致する。上位4つは `reply_check.py` が検出する。
+
+直し方は語の置換ではなく**文の機能を書き直す**こと:
+対比は片方を落として言い切る、数え上げは予告せず本題から入る、
+cleft は主語から始める、前置きは消す。
+原典の教訓——機械的に直すと別の癖が生まれる（分号を消したら等長の短文が並んだ、
+We を増やすために「Table 3 reports」を「We report in Table 3」に変えた）。
+**直したあとは段落ごと人が読む。**
+
 ## Cut hedging
 
 Every "it may be worth considering" costs the reader time. If uncertain, state the uncertainty once

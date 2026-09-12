@@ -33,6 +33,35 @@ def last_assistant_text(transcript: pathlib.Path) -> str:
     return last
 
 
+# ── 文体の癖（2026-09-12 追加）────────────────────────────────────
+#
+# 出典: writing_skills_20260912 の check_voice.py / check_defensive.py。
+# あちらは8人のゼロコンテキスト読者が4本の論文を「人が書いたと読めるか」で
+# 3-6/10 と採点し、同じ癖を名指しした実測に基づく較正値。
+#
+# 自分の返信 1702 件 / 13.3万語を測ったところ:
+#   「, not 」対比  2.6/千語（目標 0.7）… 3.7倍
+#   「, so 」因果尾 4.0/千語（目標 2）
+#   数え上げ導入    77 回、cleft 導入 32 回、throat clearing 18 回（目標 0）
+# 1返信あたりに直すと、対比は約1回・他はほぼ0回。だから
+# 対比は2回以上、他は1回でも出たら知らせる。
+VOICE = [
+    ("contrast", 2,
+     r", not (?:a |an |the |to |of |in |on |by |its |their |that |which )?\w+",
+     "「X, not Y」の対比構文が多いです。これは機械が書いた文章の最も分かりやすい signature です。"
+     "片方を落として言い切るか、二文に分けてください"),
+    ("inventory", 1,
+     r"\b(?:Two|Three|Four|Five|Six)\s+\w+(?:\s+\w+)?\s+(?:are|stay|remain|worth|things?)\b",
+     "「Two things…」型の数え上げ導入です。数を予告せず、そのまま本題から書き始めてください"),
+    ("cleft", 1,
+     r"\bWhat \w+(?: \w+){0,5} is\b",
+     "「What matters is…」型の cleft 導入です。主語から普通に書き始めてください"),
+    ("throat", 1,
+     r"\b(?:it\s+is\s+(?:important|worth)\s+(?:to\s+)?(?:not(?:e|ing)|mention(?:ing)?)"
+     r"|it\s+should\s+be\s+noted\s+that|worth\s+noting)\b",
+     "「worth noting that」型の前置きです。前置きを消して、中身から書いてください"),
+]
+
 CHECKS = [
     # (名前, 検出パターン, 指摘文)
     ("premature-claim",
@@ -55,6 +84,15 @@ def review(text: str) -> list[str]:
             flags.append(msg)
     if "```bash" in text and not re.search(r"次|next|手順|step|実行して|run ", low):
         flags.append("コマンドを提示していますが、誰が何の順で実行するかが書かれていません")
+
+    # 文体の癖。コードブロックと表は散文ではないので除いてから数える。
+    prose = re.sub(r"```.*?```", " ", text, flags=re.S)
+    prose = re.sub(r"^\s*\|.*$", " ", prose, flags=re.M)
+    prose = re.sub(r"`[^`]*`", " ", prose)
+    for _name, limit, pat, msg in VOICE:
+        hits = len(re.findall(pat, prose, re.I))
+        if hits >= limit:
+            flags.append(f"{msg}（{hits}箇所）")
     return flags
 
 
