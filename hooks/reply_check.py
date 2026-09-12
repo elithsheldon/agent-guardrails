@@ -62,6 +62,40 @@ VOICE = [
      "「worth noting that」型の前置きです。前置きを消して、中身から書いてください"),
 ]
 
+# ── 機械の痕跡・AI 常套句（2026-09-12 追加）──────────────────────
+#
+# 出典: writing_skills_20260912 の check_ai_isms.py（P0/P1 tier）。
+# 元は conorbronsdon/avoid-ai-writing (MIT) から学術散文向けに絞り込んだもの。
+#
+# ⚠️ 自分の返信 13.8万語での実測は P0 3件・P1 3件で、ほぼ出ない。
+# 頻度で言えば文体の癖（VOICE）のほうが100倍多い。それでも入れるのは、
+# ここに1件出るのが日報や Slack 下書きだと事故になるから——回帰の見張り。
+# 誤検知はほぼ無いので閾値は1件。
+LEAKS = [
+    (r"\bas an? (?:ai|artificial intelligence|large language|ai language) (?:language )?model\b"
+     r"|\bas of my (?:knowledge )?(?:last update|cut-?off|last training)\b"
+     r"|\bi don'?t have access to real-?time (?:data|information)\b",
+     "モデル自身についての定型句が混ざっています"),
+    (r"\bi hope this helps\b|\bgreat question\b|\bexcellent point\b"
+     r"|\bfeel free to reach out\b|\byou'?re absolutely right\b"
+     r"|\blet me think step by step\b|\bhere'?s my thought process\b"
+     r"|\bto answer your question\b|\blet'?s dive in\b",
+     "チャットボット的な決まり文句です。中身だけ書いてください"),
+    (r"\[(?:Your|Insert|Add|Enter|Describe|Specify|Choose|Pick)\b[^\]\n]{1,80}\]"
+     r"|\b(?:19|20)\d{2}-XX-XX\b",
+     "未置換のプレースホルダが残っています"),
+    ("[​‌‍﻿⁠]|[A-Za-z][Ѐ-ӿ]|[Ѐ-ӿ][A-Za-z]",
+     "不可視文字またはキリル文字の混入です（貼り付け事故）"),
+    (r"\bdelve\s+into\b|\bdeep\s+dive\b|\bwhen\s+it\s+comes\s+to\b"
+     r"|\bat\s+the\s+end\s+of\s+the\s+day\b|\bdue\s+to\s+the\s+fact\s+that\b"
+     r"|\bnot\s+only\b[^.;]{0,120}\bbut\s+also\b|\b(?:firstly|secondly|thirdly)\b",
+     "AI 常套句です。普通の言い方に置き換えてください"),
+    (r"\b(?:seamless(?:ly)?|pivotal|meticulous(?:ly)?|holistic(?:ally)?|impactful"
+     r"|myriad|plethora|cornerstone|multifaceted|showcase[sd]?|showcasing"
+     r"|tapestry|beacon|game-chang(?:er|ing)|cutting-edge)\b",
+     "中身の無い形容です。具体的な事実に置き換えてください"),
+]
+
 CHECKS = [
     # (名前, 検出パターン, 指摘文)
     ("premature-claim",
@@ -93,6 +127,11 @@ def review(text: str) -> list[str]:
         hits = len(re.findall(pat, prose, re.I))
         if hits >= limit:
             flags.append(f"{msg}（{hits}箇所）")
+    for pat, msg in LEAKS:
+        hits = re.findall(pat, prose, re.I)
+        if hits:
+            sample = str(hits[0])[:40]
+            flags.append(f"{msg}: 「{sample}」")
     return flags
 
 
