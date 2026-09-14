@@ -63,11 +63,21 @@ Ask explicitly:
   bulk edits can break things unrelated to what you changed.)
 - Is the gate in the repo, where it binds everyone — or only in my memory, where it binds no one?
 
+**合規と向上を分ける。** Step 2 (gating the day's mistakes) is compliance — do it even
+when short of time. Steps 3–4 are improvement. When the day is tight, do 2 and stop;
+half a loop honestly done beats a full one skipped.
+
 ## 3. Writing / presentation review
 
 Re-read the day's user-facing output — replies, Slack drafts, PR bodies, the 日報 — against
 `references/writing-criteria.md`. Add a criterion whenever the user reacts to *how* something was
 said rather than what it said ("give clear indication", "reader's perspective", "too long").
+
+Then check claims against evidence — `references/claim-evidence.md`. The one pass that
+repays the time: find every sentence claiming something was tested or verified, and look
+for the number beside it. **Measured but unwritten is the same as unmeasured**, and 46% of
+my verification claims carry no figure. Claim scope must match evidence scope exactly —
+under-claiming wastes work already done, over-claiming is never acceptable.
 
 ## 4. Weekly — prune, and check the checks
 

@@ -96,6 +96,21 @@ LEAKS = [
      "中身の無い形容です。具体的な事実に置き換えてください"),
 ]
 
+# ── 証拠を出したのに数字を書かない（2026-09-12 追加）──────────────
+#
+# 出典: paper-polish スキル（arXiv:2608.08975 の読み込みから起こしたもの）。
+# 第一の判断基準が「実験をしたのに本文に結果を書いていない = やっていないのと同じ」。
+# 報告・PR 本文・日報にそのまま当てはまる。
+# 同型の規則: 防错机制「判定ではなく数字を出す」。
+#
+# 実測: 検証を主張する文 1055 のうち 485 (46%) に数字が無い。
+# ただし全部を報告すると煩いので、数字が無い**定型の合格宣言**だけに絞る。
+# その形に限ると 1682 発話中 10 件 (0.6%)。1件でも出たら知らせる。
+BARE_VERDICT = re.compile(
+    r"\b(?:all (?:pass|green|good)|everything (?:green|passe?[sd]?|works?)"
+    r"|tests? pass(?:ed|es)?|works? (?:fine|now)|looks? good"
+    r"|すべて(?:通|成功)|全部(?:通|OK)|問題ありません)\b", re.I)
+
 CHECKS = [
     # (名前, 検出パターン, 指摘文)
     ("premature-claim",
@@ -132,6 +147,16 @@ def review(text: str) -> list[str]:
         if hits:
             sample = str(hits[0])[:40]
             flags.append(f"{msg}: 「{sample}」")
+
+    # 合格を宣言している文に数字が無い＝測ったのに書いていない
+    for s in re.split(r"(?<=[.!?])\s+", prose):
+        m = BARE_VERDICT.search(s)
+        if m and not re.search(r"\d", s):
+            flags.append(
+                f"「{m.group(0)}」と書いていますが数字がありません。"
+                "何件中何件か、実測値はいくつかを並べてください"
+                "（測ったのに書かないのは、測っていないのと同じ）")
+            break
     return flags
 
 

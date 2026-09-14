@@ -51,7 +51,7 @@ if "$PY" "$DEST/skills/daily-retro/scripts/verify-gates.py" > /tmp/agr_verify.tx
   tail -2 /tmp/agr_verify.txt | sed 's/^/   /'
 else
   echo "   Some gates did not fire:"
-  grep -E '★NG|落ちた|  -' /tmp/agr_verify.txt | sed 's/^/   /' || true
+  grep -E '\[FAIL\]|^failed:' /tmp/agr_verify.txt | sed 's/^/   /' || true
   echo "   Details: /tmp/agr_verify.txt"
 fi
 
